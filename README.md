@@ -4,6 +4,11 @@
 
 An end-to-end machine learning system that predicts port congestion likelihood, provides confidence scores, and explains the key factors driving each prediction using SHAP-based explainability.
 
+<img width="1841" height="921" alt="image" src="https://github.com/user-attachments/assets/8530c0b6-f3d1-4191-ac25-9e5ac23174fa" />
+
+
+<img width="1842" height="915" alt="image" src="https://github.com/user-attachments/assets/3dc4ac3f-a969-4d11-b413-b53547c8f728" />
+
 ---
 
 ## 📋 Table of Contents
