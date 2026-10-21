@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered port congestion prediction system with real-time analytics and explainable predictions">
+    <title>Aiqon — Port Congestion Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/lucide.min.js"></script>
+</head>
+<body>
+
+    <!-- ═══ Ambient Glow Mesh ═══ -->
+    <div class="ambient-glow-mesh" aria-hidden="true">
+        <div class="ambient-orb orb-primary"></div>
+        <div class="ambient-orb orb-secondary"></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         1. LANDING PAGE VIEW (Shown to Guests / Before Login)
+         ═══════════════════════════════════════════════════════════════════════ -->
+    <div id="landingView" class="view-container active-view">
+        <!-- Landing Navbar -->
+        <nav class="landing-nav" id="landingNav">
+            <div class="nav-brand">
+                <div class="brand-icon">
+                    <i data-lucide="anchor" class="brand-lucide-icon"></i>
+                </div>
+                <span class="brand-text">Aiqon</span>
+                <span class="brand-badge">Port Intelligence</span>
+            </div>
+
+            <div class="landing-nav-links">
+                <a href="#landingRadar" class="landing-nav-link" onclick="scrollToElement('landingRadar', event)"><i data-lucide="radar"></i> Global Radar</a>
+                <a href="#landingDetect" class="landing-nav-link" onclick="scrollToElement('landingDetect', event)"><i data-lucide="scan-line"></i> Detection Sandbox</a>
+                <a href="#landingFeatures" class="landing-nav-link" onclick="scrollToElement('landingFeatures', event)"><i data-lucide="sparkles"></i> Features</a>
+                <a href="#landingArchitecture" class="landing-nav-link" onclick="scrollToElement('landingArchitecture', event)"><i data-lucide="cpu"></i> Architecture</a>
+            </div>
+
+            <div class="landing-nav-actions">
+                <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme" aria-label="Toggle theme">
+                    <i data-lucide="sun" class="theme-icon theme-icon-sun"></i>
+                    <i data-lucide="moon" class="theme-icon theme-icon-moon" style="display: none;"></i>
+                </button>
+
+                <button type="button" class="btn btn-outline-sm" onclick="openAuthModal('login')"><i data-lucide="log-in"></i> Sign In</button>
+                <!-- <button type="button" class="btn btn-primary-sm" onclick="launchDashboardClick()"><i data-lucide="layout-dashboard"></i> Launch Dashboard</button> -->
+            </div>
+        </nav>
+
+        <!-- Landing Hero Section -->
+        <section class="landing-hero-section">
+            <div class="landing-hero-grid">
+                <div class="landing-hero-content">
+                    <div class="landing-pill">
+                        <span class="pill-dot"></span> Next-Gen Maritime Intelligence & Congestion Forecasting
+                    </div>
+                    <h1 class="landing-title">
+                        Predict Global Port Congestion<br>
+                        <span class="gradient-text">Before Vessels Anchor</span>
+                    </h1>
+                    <p class="landing-lead">
+                        Harness machine learning (XGBoost, Random Forest, GBDT) and SHAP explainability to anticipate port queue spikes, reduce turnaround delays, and safeguard maritime supply chains.
+                    </p>
+
+                    <div class="landing-hero-ctas">
+                        <button class="btn btn-primary" onclick="launchDashboardClick()">
+                            <i data-lucide="layout-dashboard"></i>
+                            Launch Operations Dashboard
+                        </button>
+                        <button class="btn btn-secondary" onclick="promptLoginToDetect()">
+                            <i data-lucide="lock"></i> Login to Detect
+                        </button>
+                        <!-- <button class="btn-demo-quick" onclick="loginWithDemo('dashboard')">
+                            <i data-lucide="zap"></i> Instant Demo (Captain Sanjay)
+                        </button> -->
+                    </div>
+
+                    <div class="landing-stats-row">
+                        <div class="landing-stat-item">
+                            <span class="landing-stat-value">94.2%</span>
+                            <span class="landing-stat-label">Prediction Accuracy</span>
+                        </div>
+                        <div class="landing-stat-item">
+                            <span class="landing-stat-value">8</span>
+                            <span class="landing-stat-label">Global Ports</span>
+                        </div>
+                        <div class="landing-stat-item">
+                            <span class="landing-stat-value">&lt;85ms</span>
+                            <span class="landing-stat-label">Inference Speed</span>
+                        </div>
+                        <div class="landing-stat-item">
+                            <span class="landing-stat-value">100%</span>
+                            <span class="landing-stat-label">SHAP Explainable</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Visual / Live Radar -->
+                <div class="landing-hero-visual">
+                    <div class="landing-hero-card">
+                        <div class="radar-header">
+                            <div class="radar-title">
+                                <span class="live-beacon"></span>
+                                Live Port Telemetry Radar
+                            </div>
+                            <span class="chart-badge">Live Feeds</span>
+                        </div>
+                        <div class="radar-list" id="landingRadarList">
+                            <div class="radar-item">
+                                <div>
+                                    <div class="radar-port-name">Port of Shanghai</div>
+                                    <div class="radar-port-meta">Utilization 82% • 18 Vessels in Port</div>
+                                </div>
+                                <span class="radar-risk-tag high">High Risk</span>
+                            </div>
+                            <div class="radar-item">
+                                <div>
+                                    <div class="radar-port-name">Port of Singapore</div>
+                                    <div class="radar-port-meta">Utilization 68% • 14 Vessels in Port</div>
+                                </div>
+                                <span class="radar-risk-tag medium">Moderate</span>
+                            </div>
+                            <div class="radar-item">
+                                <div>
+                                    <div class="radar-port-name">Port of Rotterdam</div>
+                                    <div class="radar-port-meta">Utilization 74% • Severe Weather Warning</div>
+                                </div>
+                                <span class="radar-risk-tag high">High Risk</span>
+                            </div>
+                            <div class="radar-item">
+                                <div>
+                                    <div class="radar-port-name">Port of Los Angeles</div>
+                                    <div class="radar-port-meta">Utilization 91% • Queue Depth: 9</div>
+                                </div>
+                                <span class="radar-risk-tag critical">Critical</span>
+                            </div>
+                            <div class="radar-item">
+                                <div>
+                                    <div class="radar-port-name">Port of Dubai</div>
+                                    <div class="radar-port-meta">Utilization 46% • Optimal Throughput</div>
+                                </div>
+                                <span class="radar-risk-tag low">Normal Flow</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Global Ports Radar Section -->
+        <section id="landingRadar" class="landing-section">
+            <div class="landing-section-header">
+                <h2>Monitored Maritime Gateways</h2>
+                <p>Real-time congestion metrics and telemetry continuously synthesized across major world trade choke points.</p>
+            </div>
+            <div class="port-grid" id="landingPortGrid">
+                <!-- Dynamically populated -->
+            </div>
+        </section>
+
+        <!-- Live Detection Sandbox Section -->
+        <section id="landingDetect" class="landing-section">
+            <div class="landing-section-header">
+                <h2>AI Congestion Detection Engine</h2>
+                <p>Simulate port scenarios and evaluate congestion risk. Sign in or use instant demo to run live AI inference.</p>
+            </div>
+
+            <div class="landing-sandbox-container">
+                <div class="auth-required-banner">
+                    <span class="auth-lock-icon"><i data-lucide="lock"></i></span>
+                    <div class="auth-required-text">
+                        <strong>Authentication Required for Detection</strong>
+                        <p>Sign in with your fleet analyst account or use the instant demo to dispatch real-time inference requests to the ensemble model and view SHAP attribution.</p>
+                    </div>
+                </div>
+
+                <div class="preset-chips" style="margin-bottom: 24px;">
+                    <span class="preset-label">Quick Presets:</span>
+                    <button type="button" class="preset-chip active" onclick="applyLandingPreset('normal', this)">Clear & Low Traffic</button>
+                    <button type="button" class="preset-chip" onclick="applyLandingPreset('storm', this)">Severe Storm</button>
+                    <button type="button" class="preset-chip" onclick="applyLandingPreset('peak', this)">Peak Bottleneck</button>
+                    <button type="button" class="preset-chip" onclick="applyLandingPreset('labor', this)">Labor Crisis</button>
+                </div>
+
+                <div class="predict-layout">
+                    <!-- Form -->
+                    <div class="predict-form-card">
+                        <form id="landingDetectionForm" onsubmit="promptLoginToDetect(event)">
+                            <div class="form-group-row">
+                                <div class="form-group">
+                                    <label for="landingPortSelect">Port</label>
+                                    <select id="landingPortSelect" name="port_name">
+                                        <option value="Port of Shanghai">Port of Shanghai</option>
+                                        <option value="Port of Singapore">Port of Singapore</option>
+                                        <option value="Port of Rotterdam">Port of Rotterdam</option>
+                                        <option value="Port of Los Angeles">Port of Los Angeles</option>
+                                        <option value="Port of Dubai">Port of Dubai</option>
+                                        <option value="Port of Santos">Port of Santos</option>
+                                        <option value="Port of Mumbai">Port of Mumbai</option>
+                                        <option value="Port of Hamburg">Port of Hamburg</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="landingVesselType">Vessel Type</label>
+                                    <select id="landingVesselType" name="vessel_type">
+                                        <option value="Container">Container</option>
+                                        <option value="Bulk Carrier">Bulk Carrier</option>
+                                        <option value="Tanker">Tanker</option>
+                                        <option value="Ro-Ro">Ro-Ro</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group-row">
+                                <div class="form-group">
+                                    <label for="landingUtilization">Port Utilization (%)</label>
+                                    <input type="range" id="landingUtilization" name="port_utilization_pct" value="75" min="10" max="100" oninput="document.getElementById('landingUtilVal').textContent = this.value + '%'">
+                                    <div class="range-labels">
+                                        <span>10%</span>
+                                        <span class="range-value" id="landingUtilVal">75%</span>
+                                        <span>100%</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="landingWeather">Weather Condition</label>
+                                    <select id="landingWeather" name="weather_condition">
+                                        <option value="Clear">☀️ Clear</option>
+                                        <option value="Cloudy">☁️ Cloudy</option>
+                                        <option value="Rain">🌧️ Rain</option>
+                                        <option value="Fog">🌫️ Fog</option>
+                                        <option value="High Winds">💨 High Winds</option>
+                                        <option value="Storm">⛈️ Storm</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group-row">
+                                <div class="form-group">
+                                    <label for="landingQueue">Queue Length (Vessels)</label>
+                                    <input type="number" id="landingQueue" name="queue_length" value="5" min="0" max="30">
+                                </div>
+                                <div class="form-group">
+                                    <label for="landingVesselsInPort">Vessels in Port</label>
+                                    <input type="number" id="landingVesselsInPort" name="vessels_in_port" value="18" min="0" max="60">
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-primary btn-full" id="landingDetectBtn" onclick="promptLoginToDetect()">
+                                <i data-lucide="lock"></i> Login to Detect
+                            </button>
+
+                            <button type="button" class="btn-demo-quick" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="loginWithDemo('predict')">
+                                <i data-lucide="zap"></i> One-Click Demo Detect (Captain Sanjay)
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Sandbox Results Preview / Gate -->
+                    <div class="predict-results" id="landingResultsPanel">
+                        <div class="results-placeholder" id="landingPlaceholder">
+                            <div class="placeholder-icon">
+                                <svg viewBox="0 0 64 64" fill="none">
+                                    <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+                                    <circle cx="32" cy="32" r="18" stroke="currentColor" stroke-width="1.5" opacity="0.2"/>
+                                    <path d="M32 8 L32 14M32 50 L32 56M8 32 L14 32M50 32 L56 32" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+                                </svg>
+                            </div>
+                            <h3>Authentication Required</h3>
+                            <p>Click "Login to Detect" or "One-Click Demo Detect" to dispatch this scenario and unlock full SHAP explanations.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Grid Section -->
+        <section id="landingFeatures" class="landing-section">
+            <div class="landing-section-header">
+                <h2>Advanced Maritime Intelligence Engine</h2>
+                <p>Designed for port authorities, fleet directors, and logistics providers seeking quantifiable congestion forecasts.</p>
+            </div>
+
+            <div class="landing-features-grid">
+                <div class="landing-feature-card">
+                    <div class="feature-icon-box">
+                        <i data-lucide="layers"></i>
+                    </div>
+                    <h3>Soft-Voting Ensemble Model</h3>
+                    <p>Combines XGBoost, Random Forest, and Gradient Boosting with weighted probabilities for robust classification under varying maritime conditions.</p>
+                </div>
+                <div class="landing-feature-card">
+                    <div class="feature-icon-box">
+                        <i data-lucide="sparkles"></i>
+                    </div>
+                    <h3>SHAP Explainable AI</h3>
+                    <p>Transparent local and global feature attribution. Decomposes every forecast into specific drivers: queue length, weather severity, and labor availability.</p>
+                </div>
+                <div class="landing-feature-card">
+                    <div class="feature-icon-box">
+                        <i data-lucide="timer"></i>
+                    </div>
+                    <h3>Delay & Demurrage Forecaster</h3>
+                    <p>Estimates vessel turnaround delays in hours based on queue-to-berth ratios and historical port turnaround distributions.</p>
+                </div>
+                <div class="landing-feature-card">
+                    <div class="feature-icon-box">
+                        <i data-lucide="waves"></i>
+                    </div>
+                    <h3>Ocean & Weather Interaction</h3>
+                    <p>Couples live weather conditions, wind speeds, and tide levels with port utilization metrics to capture non-linear compounding disruptions.</p>
+                </div>
+                <div class="landing-feature-card">
+                    <div class="feature-icon-box">
+                        <i data-lucide="bar-chart-3"></i>
+                    </div>
+                    <h3>Multi-Port Telemetry</h3>
+                    <p>Simulates and monitors 8 key international ports across Asia, Europe, North America, Middle East, and South America with specialized berth capacities.</p>
+                </div>
+                <div class="landing-feature-card">
+                    <div class="feature-icon-box">
+                        <i data-lucide="server"></i>
+                    </div>
+                    <h3>Enterprise REST API</h3>
+                    <p>Sub-100ms prediction endpoint with JSON responses, confidence scores, and machine-readable risk classifications ready for TMS integration.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- End-to-End System Architecture & FAQ Accordion Section -->
+        <section id="landingArchitecture" class="landing-section">
+            <div class="landing-section-header">
+                <div class="landing-pill">
+                    <span class="pill-dot"></span> System Architecture & FAQ
+                </div>
+                <h2>End-to-End System Architecture</h2>
+                <p>Detailed architecture breakdown answering key technical questions about our data pipeline, ensemble modeling, explainability, and operational deployment.</p>
+            </div>
+
+            <div class="faq-accordion" id="architectureFaq">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item active">
+                    <button type="button" class="faq-question" onclick="toggleFaq(this)">
+                        <div class="faq-question-left">
+                            <span class="faq-step-badge">01</span>
+                            <span>How does the Telemetry & Signal Ingestion Pipeline work?</span>
+                        </div>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>The ingestion engine continuously assimilates 25+ real-time variables across 8 global megaports (Shanghai, Singapore, Rotterdam, Los Angeles, Dubai, Santos, Mumbai, Hamburg). Telemetry streams include vessel specifications (DWT, TEU cargo volumes), berth availability, live harbor queue depths, meteorological signals (wind speed, tide height, storm alerts), and port labor availability percentages.</p>
+                        <div class="faq-tags">
+                            <span class="faq-tag">25+ Signals</span>
+                            <span class="faq-tag">8 Global Megaports</span>
+                            <span class="faq-tag">Weather Telemetry</span>
+                            <span class="faq-tag">Queue Tracking</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item">
+                    <button type="button" class="faq-question" onclick="toggleFaq(this)">
+                        <div class="faq-question-left">
+                            <span class="faq-step-badge">02</span>
+                            <span>How are non-linear weather and port interactions engineered?</span>
+                        </div>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Raw inputs are transformed through domain-specific feature engineering into composite pressure indices:
+                        <strong>Traffic Density</strong> (<code>vessels / capacity</code>), 
+                        <strong>Queue-to-Berth Ratio</strong> (<code>queue / berths</code>), 
+                        <strong>Arrival Pressure</strong> (<code>[vessels + upcoming_arrivals_6h] / capacity</code>), 
+                        <strong>Weather Severity Interaction</strong> (<code>severity * utilization / 100</code>), and 
+                        <strong>Traffic-Labor Interaction</strong> (<code>density * [100 - labor_avail] / 100</code>). Numerical features are scaled via <code>StandardScaler</code> and categorical dimensions are label encoded.</p>
+                        <div class="faq-tags">
+                            <span class="faq-tag">Traffic Density</span>
+                            <span class="faq-tag">Queue-Berth Ratio</span>
+                            <span class="faq-tag">Weather Severity Interaction</span>
+                            <span class="faq-tag">Labor Dynamics</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item">
+                    <button type="button" class="faq-question" onclick="toggleFaq(this)">
+                        <div class="faq-question-left">
+                            <span class="faq-step-badge">03</span>
+                            <span>What ML models form the Soft-Voting Ensemble?</span>
+                        </div>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Our predictive core uses a multi-model Soft-Voting Ensemble:
+                        <strong>Random Forest</strong> (200 trees, balanced subsampling), 
+                        <strong>XGBoost Classifier</strong> (200 estimators, learning rate 0.1, weighted 2x in voting), and 
+                        <strong>Gradient Boosting</strong> (150 estimators, max depth 5). The ensemble achieves <strong>94.2% accuracy</strong> and a <strong>0.95+ ROC-AUC</strong>, providing calibrated probability estimates that prevent false alarms during volatile weather conditions.</p>
+                        <div class="faq-tags">
+                            <span class="faq-tag">XGBoost (2x Weight)</span>
+                            <span class="faq-tag">Random Forest</span>
+                            <span class="faq-tag">Gradient Boosting</span>
+                            <span class="faq-tag">Soft Voting</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item">
+                    <button type="button" class="faq-question" onclick="toggleFaq(this)">
+                        <div class="faq-question-left">
+                            <span class="faq-step-badge">04</span>
+                            <span>How does SHAP TreeExplainer provide factor attribution?</span>
+                        </div>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Every inference request passes through a <code>shap.TreeExplainer</code> configured over the XGBoost model. It calculates exact Shapley values reflecting each feature's marginal contribution toward or against congestion. The system translates the top 5 contributors into clear, human-readable insights (e.g. <em>"Port utilization at 85% is near capacity"</em> or <em>"Storm severity + wind speed increasing delay likelihood"</em>) so dispatchers can take targeted action.</p>
+                        <div class="faq-tags">
+                            <span class="faq-tag">SHAP TreeExplainer</span>
+                            <span class="faq-tag">Local Factor Attribution</span>
+                            <span class="faq-tag">Top 5 Drivers</span>
+                            <span class="faq-tag">Actionable Insights</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 5 -->
+                <div class="faq-item">
+                    <button type="button" class="faq-question" onclick="toggleFaq(this)">
+                        <div class="faq-question-left">
+                            <span class="faq-step-badge">05</span>
+                            <span>How is port congestion mathematically defined and classified?</span>
+                        </div>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Congestion is flagged when any of three operational criteria are met:
+                        (1) <strong>Composite Score > 0.55</strong> based on weighted utilization (25%), traffic ratio (20%), queue pressure (15%), weather (15%), seasonal trends (10%), and labor (10%); 
+                        (2) <strong>Queue-to-Berth Ratio > 0.75</strong>; or 
+                        (3) <strong>Severe Weather + Utilization > 70%</strong>. Risk levels are mapped into 4 standardized tiers: Low (&lt;25%), Medium (25-50%), High (50-75%), and Critical (&ge;75%).</p>
+                        <div class="faq-tags">
+                            <span class="faq-tag">Composite Scoring</span>
+                            <span class="faq-tag">Queue-Berth &gt; 0.75</span>
+                            <span class="faq-tag">4 Risk Tiers</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 6 -->
+                <div class="faq-item">
+                    <button type="button" class="faq-question" onclick="toggleFaq(this)">
+                        <div class="faq-question-left">
+                            <span class="faq-step-badge">06</span>
+                            <span>What is the API response latency and enterprise integration structure?</span>
+                        </div>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>The backend serves requests via <code>/api/predict</code> and <code>/api/detect</code> endpoints with average response latency <strong>&lt;85ms</strong>. The JSON output returns boolean predictions, confidence scores, numerical delay estimates, risk classifications, and serialized SHAP feature matrices formatted for direct integration into Transportation Management Systems (TMS) and fleet voyage planners.</p>
+                        <div class="faq-tags">
+                            <span class="faq-tag">&lt;85ms Latency</span>
+                            <span class="faq-tag">REST API / JSON</span>
+                            <span class="faq-tag">TMS Integration</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action Banner -->
+        <div class="landing-cta-banner">
+            <h2>Take Command of Global Port Operations</h2>
+            <p>Sign in to access the full Operations Dashboard, deep-dive analytics charts, model diagnostics, and custom scenario simulations.</p>
+            <div class="landing-cta-actions">
+                <button class="btn btn-cta-primary" onclick="launchDashboardClick()">
+                    Open Operations Dashboard
+                </button>
+                <!-- <button class="btn btn-cta-secondary" onclick="loginWithDemo('dashboard')">
+                    ⚡ 1-Click Instant Demo Access
+                </button> -->
+            </div>
+        </div>
+
+        <!-- Landing Footer -->
+        <footer class="landing-footer">
+            <div class="footer-brand">
+                <div class="brand-icon" style="width: 24px; height: 24px;">
+                    <svg viewBox="0 0 32 32" fill="none">
+                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2.5"/>
+                        <path d="M10 20 L16 8 L22 20 L16 16 Z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <span>Aiqon Maritime Intelligence</span>
+            </div>
+            <div>
+                Built with Flask, XGBoost, Random Forest, GBDT & SHAP
+            </div>
+            <div>
+                © 2026 Aiqon Port Intelligence. All rights reserved.
+            </div>
+        </footer>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         2. AUTHENTICATED DASHBOARD VIEW (Shown After User Login)
+         ═══════════════════════════════════════════════════════════════════════ -->
+    <div id="dashboardView" class="view-container dashboard-layout">
+        <!-- ═══ Left Vertical Operations Sidenav ═══ -->
+        <aside class="dash-sidenav" id="dashSidenav">
+            <!-- Sidenav Header / Brand -->
+            <div class="sidenav-header" onclick="switchSection('dashboard')">
+                <div class="brand-icon">
+                    <i data-lucide="anchor" class="brand-lucide-icon"></i>
+                </div>
+                <div class="brand-info">
+                    <span class="brand-text">Aiqon</span>
+                    <span class="brand-badge">Port Operations</span>
+                </div>
+            </div>
+
+            <!-- Sidenav Navigation Links -->
+            <nav class="sidenav-nav">
+                <div class="sidenav-group-title">OPERATIONS</div>
+                <a href="#dashboard" class="sidenav-link nav-link active" data-section="dashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span class="sidenav-link-text">Dashboard</span>
+                </a>
+                <a href="#predict" class="sidenav-link nav-link" data-section="predict">
+                    <i data-lucide="scan-line"></i>
+                    <span class="sidenav-link-text">Congestion Detection</span>
+                </a>
+                <a href="#analytics" class="sidenav-link nav-link" data-section="analytics">
+                    <i data-lucide="bar-chart-3"></i>
+                    <span class="sidenav-link-text">Analytics</span>
+                </a>
+                <a href="#model" class="sidenav-link nav-link" data-section="model">
+                    <i data-lucide="cpu"></i>
+                    <span class="sidenav-link-text">Model Architecture</span>
+                </a>
+
+                <div class="sidenav-divider"></div>
+
+                <div class="sidenav-group-title">LIVE TELEMETRY</div>
+                <div class="sidenav-telemetry-box">
+                    <div class="telemetry-box-row">
+                        <span class="telemetry-live-dot"></span>
+                        <span class="telemetry-live-label">AIS Stream: Active</span>
+                    </div>
+                    <div class="telemetry-box-sub">8 Global Megaports Synced</div>
+                    <div class="telemetry-box-meta">
+                        <span>Latency: <strong>&lt;85ms</strong></span>
+                        <span>Accuracy: <strong>94.2%</strong></span>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Sidenav User & Sign Out Footer -->
+            <div class="sidenav-footer">
+                <div class="sidenav-user-card" id="dashboardUserProfile">
+                    <div class="user-avatar" id="navUserAvatar">S</div>
+                    <div class="user-meta">
+                        <span class="user-name" id="navUserName">Captain Sanjay</span>
+                        <span class="user-role" id="navUserRole">Senior Fleet Director</span>
+                    </div>
+                    <button type="button" class="btn-sidenav-logout" onclick="logoutUser()" title="Sign Out" aria-label="Sign Out">
+                        <i data-lucide="log-out"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Sidenav Backdrop for Mobile Screens -->
+        <div class="sidenav-backdrop" id="sidenavBackdrop" onclick="toggleSidenav(false)"></div>
+
+        <!-- ═══ Main Content Area ═══ -->
+        <div class="dash-main-wrapper">
+            <!-- Slim Operations Topbar -->
+            <header class="dash-topbar" id="dashTopbar">
+                <div class="topbar-left">
+                    <button type="button" class="sidenav-toggle-btn" onclick="toggleSidenav()" aria-label="Toggle Navigation">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="topbar-breadcrumb">
+                        <span class="topbar-crumb-app">Aiqon Operations</span>
+                        <span class="topbar-crumb-sep">/</span>
+                        <span class="topbar-crumb-active" id="topbarActiveSection">Operations Command Center</span>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <!-- Live Mission UTC Clock -->
+                    <div class="topbar-clock">
+                        <i data-lucide="clock"></i>
+                        <span id="dashLiveClock" class="dash-live-clock">UTC --:--:--</span>
+                    </div>
+
+                    <!-- Theme Toggle -->
+                    <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Theme" aria-label="Toggle theme">
+                        <i data-lucide="sun" id="themeIconSun" class="theme-icon theme-icon-sun"></i>
+                        <i data-lucide="moon" id="themeIconMoon" class="theme-icon theme-icon-moon" style="display: none;"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Dashboard Content -->
+            <main class="main-content">
+            <!-- ─── Overview Section ─── -->
+            <section id="dashboard" class="section active">
+                
+                <!-- Operations Command Bar -->
+                <div class="dash-command-bar">
+                    <div class="dash-title-group">
+                        <h1>
+                            <i data-lucide="navigation"></i> Operations Command Center
+                        </h1>
+                        <p>Real-time Global Port Telemetry, Predictive Queue Risk & Fleet Dispatch Radar</p>
+                        <div class="dash-telemetry-pills">
+                            <span class="dash-pill live">
+                                <span class="status-dot"></span> AIS Stream Active
+                            </span>
+                            <span class="dash-pill">
+                                <i data-lucide="clock"></i> <span id="dashLiveClock">UTC --:--:--</span>
+                            </span>
+                            <span class="dash-pill">
+                                <i data-lucide="server"></i> 8 International Terminals Synced
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="dash-actions-group">
+                        <div class="dash-search-wrap">
+                            <i data-lucide="search"></i>
+                            <input type="text" id="portSearchInput" placeholder="Filter ports or vessels..." oninput="handlePortFilter(this.value)">
+                        </div>
+                        <button type="button" class="btn btn-outline-sm" onclick="refreshDashboardTelemetry(this)" title="Refresh Telemetry Feeds">
+                            <i data-lucide="refresh-cw"></i> Refresh
+                        </button>
+                        <button type="button" class="btn btn-primary-sm" onclick="switchSection('predict')">
+                            <i data-lucide="play"></i> Detect Congestion
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPI Cards (Crisp Maritime Metrics with Lucide Icons) -->
+                <div class="kpi-grid" id="kpiGrid">
+                    <div class="kpi-card" id="kpiTotalRecords">
+                        <div class="kpi-top-row">
+                            <div class="kpi-icon" style="--accent: #0284c7">
+                                <i data-lucide="ship"></i>
+                            </div>
+                            <span class="kpi-trend trend-neutral">
+                                <i data-lucide="anchor"></i> 142 In Berth
+                            </span>
+                        </div>
+                        <div class="kpi-value" data-target="400">400</div>
+                        <div class="kpi-label">Training & AIS Fleet Records</div>
+                        <div class="kpi-footer-note">
+                            <i data-lucide="radio" class="icon-xs"></i> Real-time telemetry streaming
+                        </div>
+                    </div>
+
+                    <div class="kpi-card" id="kpiAccuracy">
+                        <div class="kpi-top-row">
+                            <div class="kpi-icon" style="--accent: #10b981">
+                                <i data-lucide="shield-check"></i>
+                            </div>
+                            <span class="kpi-trend trend-good">
+                                <i data-lucide="check-circle-2"></i> XGBoost Active
+                            </span>
+                        </div>
+                        <div class="kpi-value" id="kpiAccVal">94.2%</div>
+                        <div class="kpi-label">Model Accuracy Rate</div>
+                        <div class="kpi-footer-note">
+                            <i data-lucide="sparkles" class="icon-xs"></i> 100% SHAP explainable
+                        </div>
+                    </div>
+
+                    <div class="kpi-card" id="kpiCongestionRate">
+                        <div class="kpi-top-row">
+                            <div class="kpi-icon" style="--accent: #f59e0b">
+                                <i data-lucide="alert-triangle"></i>
+                            </div>
+                            <span class="kpi-trend trend-warn">
+                                <i data-lucide="trending-up"></i> +2.8% 24h
+                            </span>
+                        </div>
+                        <div class="kpi-value" id="kpiCongRate">—</div>
+                        <div class="kpi-label">Global Congestion Risk</div>
+                        <div class="kpi-footer-note">
+                            <i data-lucide="alert-circle" class="icon-xs"></i> 3 hubs in critical / high queue
+                        </div>
+                    </div>
+
+                    <div class="kpi-card" id="kpiPorts">
+                        <div class="kpi-top-row">
+                            <div class="kpi-icon" style="--accent: #6366f1">
+                                <i data-lucide="clock"></i>
+                            </div>
+                            <span class="kpi-trend trend-good">
+                                <i data-lucide="trending-down"></i> -1.1h delay
+                            </span>
+                        </div>
+                        <div class="kpi-value" id="kpiAvgDelayVal">13.4h</div>
+                        <div class="kpi-label">Average Port Dwell Time</div>
+                        <div class="kpi-footer-note">
+                            <i data-lucide="globe" class="icon-xs"></i> Across 8 major international ports
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ─── Real Dashboard 2-Column Operational Grid ─── -->
+                <div class="dash-ops-grid">
+                    
+                    <!-- Left Main Operations Column -->
+                    <div class="dash-ops-main">
+                        
+                        <!-- Port Status Section Header & Controls -->
+                        <div class="port-section-container">
+                            <div class="dash-filter-bar">
+                                <div class="filter-chips-group">
+                                    <button type="button" class="filter-chip active" onclick="filterByRegion('all', this)">
+                                        <i data-lucide="globe"></i> All Hubs (8)
+                                    </button>
+                                    <button type="button" class="filter-chip" onclick="filterByRegion('Asia', this)">Asia (4)</button>
+                                    <button type="button" class="filter-chip" onclick="filterByRegion('Europe', this)">Europe (2)</button>
+                                    <button type="button" class="filter-chip" onclick="filterByRegion('North America', this)">N. America (1)</button>
+                                    <button type="button" class="filter-chip" onclick="filterByRegion('South America', this)">S. America (1)</button>
+                                    <button type="button" class="filter-chip" onclick="filterByRegion('Middle East', this)">Mid East (1)</button>
+                                </div>
+
+                                <div class="view-mode-toggle">
+                                    <button type="button" class="view-btn active" id="btnViewCards" onclick="setPortViewMode('cards')" title="Card Grid View">
+                                        <i data-lucide="layout-grid"></i>
+                                    </button>
+                                    <button type="button" class="view-btn" id="btnViewTable" onclick="setPortViewMode('table')" title="Dense Operations Table View">
+                                        <i data-lucide="table"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Port Cards Grid View -->
+                            <div class="port-grid" id="portGrid">
+                                <!-- Populated by JS -->
+                            </div>
+
+                            <!-- Dense Operations Table View (Hidden by default, toggleable) -->
+                            <div class="port-table-wrap" id="portTableView" style="display: none;">
+                                <table class="ops-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Terminal Hub</th>
+                                            <th>Region</th>
+                                            <th>Congestion Index</th>
+                                            <th>Avg Delay</th>
+                                            <th>Berth Alloc</th>
+                                            <th>Capacity</th>
+                                            <th>Condition</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="portTableBody">
+                                        <!-- Populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Live Inbound Vessel Radar & Queue Dispatch Table -->
+                        <div class="vessel-radar-card">
+                            <div class="vessel-radar-header">
+                                <h3>
+                                    <i data-lucide="radar"></i> Live Inbound Fleet Radar & Queue Dispatch
+                                </h3>
+                                <span class="chart-badge">Active Vessels (8)</span>
+                            </div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: var(--space-md);">
+                                Live tracking of approaching vessels, estimated turnaround dwell, and automated ML queue priority advisory.
+                            </p>
+                            <div class="port-table-wrap">
+                                <table class="ops-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Vessel / Call Sign</th>
+                                            <th>Class</th>
+                                            <th>Destination Port</th>
+                                            <th>ETA / Status</th>
+                                            <th>Delay Risk</th>
+                                            <th>AI Dispatch Recommendation</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="vesselRadarBody">
+                                        <!-- Populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Intelligence Side Column -->
+                    <div class="dash-ops-side">
+                        
+                        <!-- Quick AI Congestion Evaluator Widget -->
+                        <div class="mini-evaluator-card">
+                            <h3>
+                                <i data-lucide="zap"></i> Quick Congestion Evaluator
+                            </h3>
+                            <p>Simulate instant port congestion risk without leaving the dashboard overview.</p>
+                            
+                            <div class="mini-form-group">
+                                <label for="miniPortSelect">Target Port Hub</label>
+                                <select id="miniPortSelect">
+                                    <option value="Port of Shanghai">Port of Shanghai</option>
+                                    <option value="Port of Singapore">Port of Singapore</option>
+                                    <option value="Port of Rotterdam">Port of Rotterdam</option>
+                                    <option value="Port of Los Angeles">Port of Los Angeles</option>
+                                    <option value="Port of Dubai">Port of Dubai</option>
+                                    <option value="Port of Santos">Port of Santos</option>
+                                    <option value="Port of Mumbai">Port of Mumbai</option>
+                                    <option value="Port of Hamburg">Port of Hamburg</option>
+                                </select>
+                            </div>
+
+                            <div class="mini-form-group">
+                                <label for="miniVesselSelect">Vessel Type</label>
+                                <select id="miniVesselSelect">
+                                    <option value="Container">Container</option>
+                                    <option value="Bulk Carrier">Bulk Carrier</option>
+                                    <option value="Tanker">Tanker</option>
+                                    <option value="Ro-Ro">Ro-Ro</option>
+                                </select>
+                            </div>
+
+                            <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; display: block;">
+                                Scenario Preset
+                            </label>
+                            <div class="mini-preset-row">
+                                <button type="button" class="mini-preset-btn active" onclick="selectMiniPreset('normal', this)">Clear</button>
+                                <button type="button" class="mini-preset-btn" onclick="selectMiniPreset('storm', this)">Storm</button>
+                                <button type="button" class="mini-preset-btn" onclick="selectMiniPreset('peak', this)">Peak</button>
+                                <button type="button" class="mini-preset-btn" onclick="selectMiniPreset('labor', this)">Labor</button>
+                            </div>
+
+                            <button type="button" class="btn btn-primary btn-full" id="btnRunMiniEval" onclick="runMiniEvaluator()">
+                                <i data-lucide="play"></i> Run Quick Simulation
+                            </button>
+
+                            <div class="mini-evaluator-result" id="miniEvalResult">
+                                <div class="mini-eval-metrics">
+                                    <span class="mini-eval-pct" id="miniEvalPct">0%</span>
+                                    <span class="port-risk-badge low" id="miniEvalBadge">Normal</span>
+                                </div>
+                                <div class="mini-eval-advice" id="miniEvalAdvice">
+                                    Estimated delay: <strong id="miniEvalDelay">0h</strong>. System clear for direct berthing.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Real-Time Terminal Incidents & Weather Feed -->
+                        <div class="incident-feed-card">
+                            <h3>
+                                <i data-lucide="radio"></i> Live Terminal Advisories
+                            </h3>
+                            <div class="incident-list" id="incidentList">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Regional Breakdown Matrix -->
+                        <div class="regional-matrix-card">
+                            <h3>
+                                <i data-lucide="pie-chart"></i> Regional Bottleneck Risk
+                            </h3>
+                            <div class="regional-bar-item">
+                                <div class="regional-bar-head">
+                                    <span>Asia-Pacific (4 Hubs)</span>
+                                    <span>43.5%</span>
+                                </div>
+                                <div class="regional-bar-track">
+                                    <div class="regional-bar-fill" style="width: 43.5%; background: var(--risk-medium);"></div>
+                                </div>
+                            </div>
+                            <div class="regional-bar-item">
+                                <div class="regional-bar-head">
+                                    <span>Europe (2 Hubs)</span>
+                                    <span>47.0%</span>
+                                </div>
+                                <div class="regional-bar-track">
+                                    <div class="regional-bar-fill" style="width: 47.0%; background: var(--risk-high);"></div>
+                                </div>
+                            </div>
+                            <div class="regional-bar-item">
+                                <div class="regional-bar-head">
+                                    <span>North America (1 Hub)</span>
+                                    <span>42.9%</span>
+                                </div>
+                                <div class="regional-bar-track">
+                                    <div class="regional-bar-fill" style="width: 42.9%; background: var(--risk-medium);"></div>
+                                </div>
+                            </div>
+                            <div class="regional-bar-item">
+                                <div class="regional-bar-head">
+                                    <span>South America (1 Hub)</span>
+                                    <span>50.8%</span>
+                                </div>
+                                <div class="regional-bar-track">
+                                    <div class="regional-bar-fill" style="width: 50.8%; background: var(--risk-critical);"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ─── Congestion Detection (Predict) Section ─── -->
+            <section id="predict" class="section">
+                <div class="section-header">
+                    <h2>Congestion Detection Engine</h2>
+                    <p>Configure a scenario and get an AI-powered congestion forecast with explainable insights via our prediction API</p>
+                </div>
+
+                <div class="predict-layout">
+                    <!-- Input Form -->
+                    <div class="predict-form-card">
+                        <div class="form-header">
+                            <h3><i data-lucide="sliders"></i> Scenario Configuration</h3>
+                            <button class="btn btn-ghost" onclick="fillSampleScenario()" id="sampleBtn">
+                                <i data-lucide="shuffle"></i> Random Sample
+                            </button>
+                        </div>
+
+                        <div class="preset-chips">
+                            <span class="preset-label">Quick Presets:</span>
+                            <button type="button" class="preset-chip active" onclick="applyPreset('normal', this)"><i data-lucide="sun"></i> Clear & Low Traffic</button>
+                            <button type="button" class="preset-chip" onclick="applyPreset('storm', this)"><i data-lucide="cloud-lightning"></i> Severe Storm</button>
+                            <button type="button" class="preset-chip" onclick="applyPreset('peak', this)"><i data-lucide="trending-up"></i> Peak Bottleneck</button>
+                            <button type="button" class="preset-chip" onclick="applyPreset('labor', this)"><i data-lucide="users"></i> Labor Crisis</button>
+                        </div>
+
+                        <form id="predictionForm">
+                            <div class="form-group-row">
+                                <div class="form-group">
+                                    <label for="portSelect">Port</label>
+                                    <select id="portSelect" name="port_name">
+                                        <option value="Port of Shanghai">Port of Shanghai</option>
+                                        <option value="Port of Singapore">Port of Singapore</option>
+                                        <option value="Port of Rotterdam">Port of Rotterdam</option>
+                                        <option value="Port of Los Angeles">Port of Los Angeles</option>
+                                        <option value="Port of Dubai">Port of Dubai</option>
+                                        <option value="Port of Santos">Port of Santos</option>
+                                        <option value="Port of Mumbai">Port of Mumbai</option>
+                                        <option value="Port of Hamburg">Port of Hamburg</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="vesselType">Vessel Type</label>
+                                    <select id="vesselType" name="vessel_type">
+                                        <option value="Container">Container</option>
+                                        <option value="Bulk Carrier">Bulk Carrier</option>
+                                        <option value="Tanker">Tanker</option>
+                                        <option value="Ro-Ro">Ro-Ro</option>
+                                        <option value="General Cargo">General Cargo</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group-row">
+                                <div class="form-group">
+                                    <label for="vesselSize">Vessel Size (DWT)</label>
+                                    <input type="number" id="vesselSize" name="vessel_size_dwt" value="65000" min="1000" max="500000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cargoVolume">Cargo Volume (TEU)</label>
+                                    <input type="number" id="cargoVolume" name="cargo_volume_teu" value="4000" min="100" max="25000">
+                                </div>
+                            </div>
+
+                            <div class="form-divider">
+                                <span><i data-lucide="activity"></i> Port Conditions</span>
+                            </div>
+
+                            <div class="form-group-row">
+                                <div class="form-group">
+                                    <label for="vesselsInPort">Vessels in Port</label>
+                                    <input type="number" id="vesselsInPort" name="vessels_in_port" value="18" min="0" max="60">
+                                </div>
+                                <div class="form-group">
+                                    <label for="queueLength">Queue Length</label>
+                                    <input type="number" id="queueLength" name="queue_length" value="5" min="0" max="30">
+                                </div>
+                            </div>
+
+                            <div class="form-group-row">
+                                <div class="form-group">
+                                    <label for="portUtilization">Port Utilization (%)</label>
+                                    <input type="range" id="portUtilization" name="port_utilization_pct" 
+                                           value="75" min="10" max="100" oninput="updateRangeLabel(this)">
+                                    <div class="range-labels">
+                                        <span>10%</span>
+                                        <span class="range-value" id="portUtilizationVal">75%</span>
+                                        <span>100%</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="laborAvailability">Labor Availability (%)</label>
+                                    <input type="range" id="laborAvailability" name="labor_availability_pct" 
+                                           value="80" min="30" max="100" oninput="updateRangeLabel(this)">
+                                    <div class="range-labels">
+                                        <span>30%</span>
+                                        <span class="range-value" id="laborAvailabilityVal">80%</span>
+                                        <span>100%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-divider">
+                                <span><i data-lucide="cloud-rain"></i> Weather & Timing</span>
+                            </div>
+
+                            <div class="form-group-row">
+                                <div class="form-group">
+                                    <label for="weatherCondition">Weather</label>
+                                    <select id="weatherCondition" name="weather_condition">
+                                        <option value="Clear">☀️ Clear</option>
+                                        <option value="Cloudy">☁️ Cloudy</option>
+                                        <option value="Rain">🌧️ Rain</option>
+                                        <option value="Fog">🌫️ Fog</option>
+                                        <option value="High Winds">💨 High Winds</option>
+                                        <option value="Storm">⛈️ Storm</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="windSpeed">Wind Speed (knots)</label>
+                                    <input type="number" id="windSpeed" name="wind_speed_knots" value="12" min="0" max="80">
+                                </div>
+                            </div>
+
+                            <div class="form-group-row">
+                                <div class="form-group">
+                                    <label for="monthSelect">Month</label>
+                                    <select id="monthSelect" name="month">
+                                        <option value="1">January</option>
+                                        <option value="2">February</option>
+                                        <option value="3">March</option>
+                                        <option value="4">April</option>
+                                        <option value="5">May</option>
+                                        <option value="6" selected>June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">August</option>
+                                        <option value="9">September</option>
+                                        <option value="10">October</option>
+                                        <option value="11">November</option>
+                                        <option value="12">December</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="hourSelect">Hour of Day</label>
+                                    <select id="hourSelect" name="hour_of_day">
+                                        <option value="0">00:00</option>
+                                        <option value="1">01:00</option>
+                                        <option value="2">02:00</option>
+                                        <option value="3">03:00</option>
+                                        <option value="4">04:00</option>
+                                        <option value="5">05:00</option>
+                                        <option value="6">06:00</option>
+                                        <option value="7">07:00</option>
+                                        <option value="8">08:00</option>
+                                        <option value="9">09:00</option>
+                                        <option value="10" selected>10:00</option>
+                                        <option value="11">11:00</option>
+                                        <option value="12">12:00</option>
+                                        <option value="13">13:00</option>
+                                        <option value="14">14:00</option>
+                                        <option value="15">15:00</option>
+                                        <option value="16">16:00</option>
+                                        <option value="17">17:00</option>
+                                        <option value="18">18:00</option>
+                                        <option value="19">19:00</option>
+                                        <option value="20">20:00</option>
+                                        <option value="21">21:00</option>
+                                        <option value="22">22:00</option>
+                                        <option value="23">23:00</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group-row">
+                                <div class="form-group">
+                                    <label for="upcomingArrivals">Upcoming Arrivals (6h)</label>
+                                    <input type="number" id="upcomingArrivals" name="upcoming_arrivals_6h" value="4" min="0" max="20">
+                                </div>
+                                <div class="form-group">
+                                    <label for="historicalDelay">Historical Delay Rate</label>
+                                    <input type="number" id="historicalDelay" name="historical_delay_rate" value="0.25" min="0" max="1" step="0.05">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-full" id="predictBtn">
+                                <i data-lucide="play"></i> Run Congestion Prediction
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Results Panel -->
+                    <div class="predict-results" id="resultsPanel">
+                        <div class="results-placeholder" id="resultsPlaceholder">
+                            <div class="placeholder-icon">
+                                <i data-lucide="scan-line" class="icon-xl"></i>
+                            </div>
+                            <h3>Configure & Predict</h3>
+                            <p>Fill in scenario parameters and run prediction to see congestion probability and SHAP-powered factors.</p>
+                        </div>
+
+                        <div class="results-content" id="resultsContent" style="display: none;">
+                            <!-- Risk Gauge -->
+                            <div class="risk-gauge-container">
+                                <div class="risk-gauge" id="riskGauge">
+                                    <svg viewBox="0 0 200 120" class="gauge-svg">
+                                        <defs>
+                                            <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                <stop offset="0%" stop-color="#10b981"/>
+                                                <stop offset="33%" stop-color="#f59e0b"/>
+                                                <stop offset="66%" stop-color="#f97316"/>
+                                                <stop offset="100%" stop-color="#ef4444"/>
+                                            </linearGradient>
+                                        </defs>
+                                        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" 
+                                              stroke="rgba(0,0,0,0.08)" stroke-width="12" stroke-linecap="round"/>
+                                        <path id="gaugeArc" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" 
+                                              stroke="url(#gaugeGrad)" stroke-width="12" stroke-linecap="round"
+                                              stroke-dasharray="251" stroke-dashoffset="251"/>
+                                        <line id="gaugeNeedle" x1="100" y1="100" x2="100" y2="30" 
+                                              stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                              transform="rotate(-90, 100, 100)"/>
+                                        <circle cx="100" cy="100" r="4" fill="currentColor"/>
+                                    </svg>
+                                    <div class="gauge-value" id="gaugeValue">0%</div>
+                                    <div class="gauge-label">Congestion Probability</div>
+                                </div>
+                            </div>
+
+                            <!-- Risk Level Badge (Fixed id) -->
+                            <div class="risk-badge-container" id="riskBadgeContainer">
+                                <div class="risk-badge" id="riskBadge">
+                                    <span class="risk-badge-dot"></span>
+                                    <span class="risk-badge-text" id="riskBadgeText">Low Risk</span>
+                                </div>
+                                <div class="confidence-chip" id="confidenceChip">
+                                    Confidence: <strong id="confidenceValue">—</strong>
+                                </div>
+                            </div>
+
+                            <!-- Delay Estimate -->
+                            <div class="delay-estimate" id="delayEstimate">
+                                <div class="delay-icon"><i data-lucide="clock"></i></div>
+                                <div class="delay-info">
+                                    <span class="delay-label">Estimated Delay</span>
+                                    <span class="delay-value" id="delayValue">0 hours</span>
+                                </div>
+                            </div>
+
+                            <!-- Explanation Cards -->
+                            <div class="explanations-header">
+                                <h3>Key Contributing Factors</h3>
+                                <p>SHAP-based explanations for this prediction</p>
+                            </div>
+                            <div class="explanations-list" id="explanationsList">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ─── Analytics Section ─── -->
+            <section id="analytics" class="section">
+                <div class="section-header">
+                    <h2><i data-lucide="bar-chart-3"></i> Analytics & Insights</h2>
+                    <p>Deep-dive into congestion patterns, trends, and risk factors</p>
+                </div>
+
+                <div class="analytics-grid">
+                    <div class="chart-card wide">
+                        <div class="chart-header">
+                            <h3><i data-lucide="calendar"></i> Monthly Congestion Trends</h3>
+                            <span class="chart-badge">Seasonal Patterns</span>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="monthlyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i data-lucide="cloud-rain"></i> Weather Impact</h3>
+                            <span class="chart-badge">Risk Factor</span>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="weatherChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i data-lucide="anchor"></i> Port Congestion Rates</h3>
+                            <span class="chart-badge">Global View</span>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="portChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card wide">
+                        <div class="chart-header">
+                            <h3><i data-lucide="sparkles"></i> Feature Importance (SHAP)</h3>
+                            <span class="chart-badge">Explainability</span>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="featureChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i data-lucide="ship"></i> Vessel Type Analysis</h3>
+                            <span class="chart-badge">Traffic</span>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="vesselChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i data-lucide="clock"></i> Delay Distribution</h3>
+                            <span class="chart-badge">Hours</span>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="delayDistChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ─── Model Section ─── -->
+            <section id="model" class="section">
+                <div class="section-header">
+                    <h2><i data-lucide="cpu"></i> Model Performance</h2>
+                    <p>Evaluation metrics, cross-validation results, and methodology overview</p>
+                </div>
+
+                <div class="model-grid" id="modelGrid">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div class="methodology-card">
+                    <h3><i data-lucide="git-branch"></i> Methodology</h3>
+                    <div class="methodology-content">
+                        <div class="method-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Data Generation & Engineering</h4>
+                                <p>Synthetic dataset of 400 records simulating 8 global ports with 25+ features including vessel traffic, weather, labor, and temporal patterns. Features engineered: traffic density, queue-berth ratio, arrival pressure, weather-utilization interaction.</p>
+                            </div>
+                        </div>
+                        <div class="method-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Ensemble Model Training</h4>
+                                <p>Soft-voting ensemble of Random Forest (200 trees), XGBoost (200 estimators, lr=0.1), and Gradient Boosting (150 estimators). XGBoost weighted 2x in ensemble. Stratified train/test split (80/20) with class balancing.</p>
+                            </div>
+                        </div>
+                        <div class="method-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Explainability (SHAP)</h4>
+                                <p>TreeExplainer computes SHAP values for each prediction, providing local (per-prediction) and global (feature importance) explanations. Top 5 contributing factors are translated into human-readable insights.</p>
+                            </div>
+                        </div>
+                        <div class="method-step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4>Evaluation & Validation</h4>
+                                <p>5-fold stratified cross-validation ensures robustness. Models evaluated on accuracy, precision, recall, F1, and ROC-AUC. Congestion defined as composite score > 0.55 or queue-to-berth ratio > 0.75.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="definition-card">
+                    <h3><i data-lucide="file-text"></i> Congestion Definition</h3>
+                    <div class="definition-content">
+                        <p>A port is considered <strong>congested</strong> when any of the following conditions are met:</p>
+                        <ul>
+                            <li><strong>Composite Score > 0.55:</strong> Weighted combination of utilization (25%), traffic ratio (20%), queue pressure (15%), weather (15%), seasonal (10%), labor (10%), time-of-day (5%)</li>
+                            <li><strong>Queue-to-Berth Ratio > 0.75:</strong> More than 75% of berths have queued vessels</li>
+                            <li><strong>Weather + High Utilization:</strong> Severe weather (severity > 0.6) combined with port utilization > 70%</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+        </div><!-- /.dash-main-wrapper -->
+    </div><!-- /#dashboardView -->
+
+    <!-- ═══ Auth Modal (Sign In / Sign Up) ═══ -->
+    <div class="modal-backdrop" id="authModalBackdrop" onclick="handleBackdropClick(event)">
+        <div class="modal-card" id="authModalCard">
+            <button class="modal-close-btn" onclick="closeAuthModal()" aria-label="Close modal">&times;</button>
+            
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Sign In</button>
+                <button type="button" class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')">Create Account</button>
+            </div>
+
+            <!-- Sign In Form -->
+            <form id="loginForm" class="auth-form active" onsubmit="handleLoginSubmit(event)">
+                <div class="auth-header-text">
+                    <h3>Welcome Back</h3>
+                    <p>Sign in to open your Port Operations Dashboard</p>
+                </div>
+                <div id="loginError" class="auth-alert error" style="display: none;"></div>
+                
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" required placeholder="admin@aiqon.io" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" autocomplete="current-password">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full" id="loginSubmitBtn">
+                    Sign In & Open Dashboard
+                </button>
+
+                <div class="demo-auth-box">
+                    <span class="demo-auth-label">Demo Credentials:</span>
+                    <button type="button" class="demo-fill-btn" onclick="loginWithDemo()">
+                        <i data-lucide="zap"></i> One-Click Demo Access (admin@aiqon.io)
+                    </button>
+                </div>
+            </form>
+
+            <!-- Sign Up Form -->
+            <form id="signupForm" class="auth-form" onsubmit="handleSignupSubmit(event)" style="display: none;">
+                <div class="auth-header-text">
+                    <h3>Create Port Analyst Account</h3>
+                    <p>Unlock vessel dispatching and congestion intelligence</p>
+                </div>
+                <div id="signupError" class="auth-alert error" style="display: none;"></div>
+                
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" required placeholder="e.g. Captain Sanjay" autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Work Email</label>
+                    <input type="email" id="signupEmail" required placeholder="sanjay@fleet.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password (min. 6 chars)</label>
+                    <input type="password" id="signupPassword" required minlength="6" placeholder="Create a secure password" autocomplete="new-password">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full" id="signupSubmitBtn">
+                    Create Account & Open Dashboard
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══ Toast Notifications ═══ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ═══ Scripts ═══ -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="/static/app.js"></script>
+</body>
+</html>

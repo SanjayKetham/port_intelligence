@@ -1,0 +1,276 @@
+{
+  "feature_names": [
+    "berth_count",
+    "port_capacity_vessels",
+    "vessel_size_dwt",
+    "cargo_volume_teu",
+    "month",
+    "day_of_week",
+    "hour_of_day",
+    "is_weekend",
+    "vessels_in_port",
+    "queue_length",
+    "port_utilization_pct",
+    "wind_speed_knots",
+    "tide_height_m",
+    "labor_availability_pct",
+    "expected_turnaround_hrs",
+    "historical_delay_rate",
+    "upcoming_arrivals_6h",
+    "traffic_density",
+    "queue_berth_ratio",
+    "arrival_pressure",
+    "weather_severity",
+    "weather_utilization_interaction",
+    "traffic_labor_interaction",
+    "is_peak_season",
+    "is_peak_hours",
+    "port_name_encoded",
+    "vessel_type_encoded",
+    "weather_condition_encoded",
+    "port_region_encoded"
+  ],
+  "categorical_features": [
+    "port_name",
+    "vessel_type",
+    "weather_condition",
+    "port_region"
+  ],
+  "numerical_features": [
+    "berth_count",
+    "port_capacity_vessels",
+    "vessel_size_dwt",
+    "cargo_volume_teu",
+    "month",
+    "day_of_week",
+    "hour_of_day",
+    "is_weekend",
+    "vessels_in_port",
+    "queue_length",
+    "port_utilization_pct",
+    "wind_speed_knots",
+    "tide_height_m",
+    "labor_availability_pct",
+    "expected_turnaround_hrs",
+    "historical_delay_rate",
+    "upcoming_arrivals_6h"
+  ],
+  "feature_importance": [
+    {
+      "feature": "port_utilization_pct",
+      "importance": 2.8121495246887207
+    },
+    {
+      "feature": "weather_utilization_interaction",
+      "importance": 0.9557229280471802
+    },
+    {
+      "feature": "queue_berth_ratio",
+      "importance": 0.7767859697341919
+    },
+    {
+      "feature": "month",
+      "importance": 0.6006295084953308
+    },
+    {
+      "feature": "traffic_density",
+      "importance": 0.4677343964576721
+    },
+    {
+      "feature": "traffic_labor_interaction",
+      "importance": 0.39235541224479675
+    },
+    {
+      "feature": "expected_turnaround_hrs",
+      "importance": 0.2776947617530823
+    },
+    {
+      "feature": "historical_delay_rate",
+      "importance": 0.2631850838661194
+    },
+    {
+      "feature": "arrival_pressure",
+      "importance": 0.24970856308937073
+    },
+    {
+      "feature": "wind_speed_knots",
+      "importance": 0.24137696623802185
+    },
+    {
+      "feature": "hour_of_day",
+      "importance": 0.2343812733888626
+    },
+    {
+      "feature": "weather_condition_encoded",
+      "importance": 0.20889124274253845
+    },
+    {
+      "feature": "vessels_in_port",
+      "importance": 0.16784527897834778
+    },
+    {
+      "feature": "port_name_encoded",
+      "importance": 0.15657773613929749
+    },
+    {
+      "feature": "labor_availability_pct",
+      "importance": 0.1379033625125885
+    },
+    {
+      "feature": "vessel_type_encoded",
+      "importance": 0.12327615916728973
+    },
+    {
+      "feature": "tide_height_m",
+      "importance": 0.12107846885919571
+    },
+    {
+      "feature": "day_of_week",
+      "importance": 0.1193707138299942
+    },
+    {
+      "feature": "vessel_size_dwt",
+      "importance": 0.09868315607309341
+    },
+    {
+      "feature": "queue_length",
+      "importance": 0.09569127857685089
+    },
+    {
+      "feature": "berth_count",
+      "importance": 0.06842488050460815
+    },
+    {
+      "feature": "cargo_volume_teu",
+      "importance": 0.061001986265182495
+    },
+    {
+      "feature": "port_region_encoded",
+      "importance": 0.059127599000930786
+    },
+    {
+      "feature": "is_peak_hours",
+      "importance": 0.04153218865394592
+    },
+    {
+      "feature": "upcoming_arrivals_6h",
+      "importance": 0.03742402419447899
+    },
+    {
+      "feature": "port_capacity_vessels",
+      "importance": 0.030256832018494606
+    },
+    {
+      "feature": "weather_severity",
+      "importance": 0.01983562484383583
+    },
+    {
+      "feature": "is_weekend",
+      "importance": 0.0
+    },
+    {
+      "feature": "is_peak_season",
+      "importance": 0.0
+    }
+  ],
+  "evaluation_results": {
+    "random_forest": {
+      "accuracy": 0.925,
+      "precision": 0.8947,
+      "recall": 0.9444,
+      "f1_score": 0.9189,
+      "roc_auc": 0.9912
+    },
+    "xgboost": {
+      "accuracy": 0.925,
+      "precision": 0.9167,
+      "recall": 0.9167,
+      "f1_score": 0.9167,
+      "roc_auc": 0.9861
+    },
+    "gradient_boosting": {
+      "accuracy": 0.925,
+      "precision": 0.8947,
+      "recall": 0.9444,
+      "f1_score": 0.9189,
+      "roc_auc": 0.9848
+    },
+    "ensemble": {
+      "accuracy": 0.9375,
+      "precision": 0.9189,
+      "recall": 0.9444,
+      "f1_score": 0.9315,
+      "roc_auc": 0.9886
+    }
+  },
+  "cv_scores": {
+    "mean": 0.887,
+    "std": 0.0586,
+    "folds": [
+      0.9123,
+      0.8,
+      0.8421,
+      0.9153,
+      0.9655
+    ]
+  },
+  "dataset_stats": {
+    "total_records": 400,
+    "congested_records": 178,
+    "congestion_rate": 0.445,
+    "ports": [
+      "Port of Mumbai",
+      "Port of Santos",
+      "Port of Singapore",
+      "Port of Hamburg",
+      "Port of Shanghai",
+      "Port of Dubai",
+      "Port of Los Angeles",
+      "Port of Rotterdam"
+    ],
+    "avg_delay_congested": 22.78,
+    "avg_delay_non_congested": 5.56
+  },
+  "port_configs": {
+    "Port of Mumbai": {
+      "congestion_rate": 0.4375,
+      "avg_delay": 15.7,
+      "avg_utilization": 65.62
+    },
+    "Port of Santos": {
+      "congestion_rate": 0.5085,
+      "avg_delay": 15.16,
+      "avg_utilization": 68.67
+    },
+    "Port of Singapore": {
+      "congestion_rate": 0.5098,
+      "avg_delay": 11.14,
+      "avg_utilization": 71.87
+    },
+    "Port of Hamburg": {
+      "congestion_rate": 0.5111,
+      "avg_delay": 15.08,
+      "avg_utilization": 71.39
+    },
+    "Port of Shanghai": {
+      "congestion_rate": 0.283,
+      "avg_delay": 9.76,
+      "avg_utilization": 61.15
+    },
+    "Port of Dubai": {
+      "congestion_rate": 0.4528,
+      "avg_delay": 12.33,
+      "avg_utilization": 66.36
+    },
+    "Port of Los Angeles": {
+      "congestion_rate": 0.4286,
+      "avg_delay": 13.19,
+      "avg_utilization": 65.56
+    },
+    "Port of Rotterdam": {
+      "congestion_rate": 0.4286,
+      "avg_delay": 13.78,
+      "avg_utilization": 70.78
+    }
+  }
+}
