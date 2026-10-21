@@ -86,13 +86,24 @@ def get_user_by_token(token):
 # ─── Load Artifacts ──────────────────────────────────────────────────────────
 
 print("Loading model artifacts...")
-ensemble_model = joblib.load(os.path.join(MODEL_DIR, "ensemble_model.pkl"))
-xgb_model = joblib.load(os.path.join(MODEL_DIR, "xgboost_model.pkl"))
-label_encoders = joblib.load(os.path.join(MODEL_DIR, "label_encoders.pkl"))
-scaler = joblib.load(os.path.join(MODEL_DIR, "scaler.pkl"))
-
-with open(os.path.join(MODEL_DIR, "model_metadata.json"), "r") as f:
-    metadata = json.load(f)
+try:
+    ensemble_model = joblib.load(os.path.join(MODEL_DIR, "ensemble_model.pkl"))
+    xgb_model = joblib.load(os.path.join(MODEL_DIR, "xgboost_model.pkl"))
+    label_encoders = joblib.load(os.path.join(MODEL_DIR, "label_encoders.pkl"))
+    scaler = joblib.load(os.path.join(MODEL_DIR, "scaler.pkl"))
+    with open(os.path.join(MODEL_DIR, "model_metadata.json"), "r") as f:
+        metadata = json.load(f)
+except Exception as e:
+    print(f"Notice: Model unpickling issue ({e}). Auto-retraining pipeline on host environment...")
+    import subprocess
+    import sys
+    subprocess.run([sys.executable, "train_model.py"], check=True)
+    ensemble_model = joblib.load(os.path.join(MODEL_DIR, "ensemble_model.pkl"))
+    xgb_model = joblib.load(os.path.join(MODEL_DIR, "xgboost_model.pkl"))
+    label_encoders = joblib.load(os.path.join(MODEL_DIR, "label_encoders.pkl"))
+    scaler = joblib.load(os.path.join(MODEL_DIR, "scaler.pkl"))
+    with open(os.path.join(MODEL_DIR, "model_metadata.json"), "r") as f:
+        metadata = json.load(f)
 
 # Load dataset for analytics
 df = pd.read_csv(DATA_PATH)
