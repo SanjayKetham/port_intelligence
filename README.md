@@ -339,4 +339,4 @@ aiqon_project/
 
 ---
 
-*Built for the Aiqon AI Internship Take-Home Assignment*
+*Built for the Aiqon*
